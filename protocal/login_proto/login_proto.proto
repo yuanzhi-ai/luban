@@ -1,0 +1,104 @@
+syntax = "proto3";
+option go_package = "github.com/yuanzhi-ai/luban/go_proto/login_proto";
+option java_multiple_files = true;
+// 登录相关协议
+package login_proto;
+
+//登录接口
+service Login{
+    //获取人机验证问题
+    rpc GetMachineVerify(GetMachineVerifyReq) returns(GetMachineVerifyRsp){};
+    // 发送人机验证结果
+    rpc SendMachineVerifyResult(SendMachineVerifyResultReq) returns(SendMachineVerifyResultRsp){};
+    // 发送短信验证码
+    rpc SendTextVerCode(SendTextVerCodeReq) returns(SendTextVerCodeRsp){};
+    // UserPswdLogin 用户账号密码登录
+    rpc UserPswdLogin(UserPswdLoginReq) returns(UserPswdLoginRsp){};
+    // UserPhoneLogin 用户手机账号登录
+    rpc UserPhoneLogin(UserPhoneLoginReq) returns(UserPhoneLoginRsp){};
+    // 用户注册
+    rpc UserRegister(UserRegisterReq) returns(UserRegisterRsp){};
+    // 忘记密码
+    rpc ResetPswd(ResetPswdReq) returns(ResetPswdRsp){};
+}
+enum VerType{
+    Invalid = 0; // 非法的验证
+    LoginVerify = 1; //登录验证
+    RegisterVerify =2; //注册验证
+    ResetPsWdVerify = 3; // 重置密码
+}
+
+message EmptyReq{}
+message EmptyRsp{}
+
+// 获取人机验证码
+message GetMachineVerifyReq{
+
+}
+
+message GetMachineVerifyRsp{
+    string code_id = 1; // 验证码的id
+    string base64_img = 2; // base64表示的验证码
+    int32 ret_code = 3; // 错误码 0成功 其他失败
+}
+
+// 发送人机验证结果请求包
+message SendMachineVerifyResultReq{
+    string code_id = 1;  // 验证码的id
+    string ans = 2; // 用户的输入
+}
+
+message SendMachineVerifyResultRsp{
+    int32 ret_code = 2; // 0成功 其他失败
+}
+
+// 向用户发送一个验证码短信求情包
+message SendTextVerCodeReq{
+    string phone_number = 1; // 用户手机号
+    VerType ver_type = 2; // 验证的类型
+}
+
+message SendTextVerCodeRsp{
+    int32 ret_code = 1; // 0成功，其他失败
+}
+
+// 用户密码登录
+message UserPswdLoginReq{
+    string phone_number = 1; // 用户登录的手机号
+    string a1 = 2; // 加密文本
+}
+
+message UserPswdLoginRsp{
+    int32 ret_code = 1; // 0 成功，其他失败
+}
+
+// 手机号登录
+message UserPhoneLoginReq{
+    string phone_number = 1;  // 手机号码
+    string ver_code = 2;  // 登录的验证码
+}
+
+message UserPhoneLoginRsp{
+    int32 ret_code = 1; // 0 成功，其他失败
+}
+
+// 用户注册
+message UserRegisterReq{
+    string phone_number = 1; // 手机号码
+    string ver_code =2; // 验证码
+}
+
+message UserRegisterRsp{
+    int32 ret_code = 1; //0成功 其他失败
+}
+
+// 重置密码
+message ResetPswdReq{
+    string phone_number = 1; //重置的手机号
+    string new_pw = 2;  // 新密码
+    string ver_code =3; // 验证码
+}
+
+message ResetPswdRsp{
+    int32 ret_code = 1; //0成功，其他失败
+}

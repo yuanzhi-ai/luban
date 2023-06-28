@@ -1,0 +1,36 @@
+syntax = "proto3";
+option go_package = "github.com/yuanzhi-ai/luban/go_proto/verify_proto";
+option java_multiple_files = true;
+// 人机验证等相关
+package verify_proto;
+
+
+service Verify{
+    // 获取验证码
+    rpc GetVerCode(GetVerCodeReq) returns(GetVerCodeRsp) {};
+    // 验证验证码
+    rpc verifyCode(verifyCodeReq) returns(verifyCodeRsp) {};
+}
+
+// GetVerCodeReq 获取验证码请求包
+message GetVerCodeReq{
+
+}
+
+// 获取验证码回包
+message GetVerCodeRsp{
+    string code_id = 1; // 验证码的id
+    string base64_img = 2; // base64表示的验证码
+    int32 ret_code = 3; // 错误码 0成功 其他失败
+}
+
+// 验证验证码请求包
+message verifyCodeReq{
+    string code_id = 1; // 验证码的id
+    string ans = 2; // 提交的答案
+}
+
+// 验证验证码回包
+message verifyCodeRsp{
+    int32 ret_code = 1; //错误码 0成功 其他失败
+}

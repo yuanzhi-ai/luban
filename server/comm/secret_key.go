@@ -58,8 +58,7 @@ func (s *skey) GetSkey(skeyMod string) (string, error) {
 
 func (s *skey) init() {
 	// 这里初始化所有的秘钥到文件里
-	s.skeyFilePaths[CaptchaSkey] = captchaSkeyPath
-	s.skeyFilePaths[LoginRegisterSkey] = LoginRegisterSkeyPath
+	s.skeyFilePaths = map[string]string{CaptchaSkey: captchaSkeyPath, LoginRegisterSkey: LoginRegisterSkeyPath}
 	// 每5分钟重新load一次秘钥
 	c := cron.New()
 	_, err := c.AddFunc("*/5 * * * *", reloadSkey)

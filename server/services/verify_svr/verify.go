@@ -30,5 +30,5 @@ func verifyCode(ctx context.Context, capId string, userAnswer string) (bool, int
 	if err != nil {
 		return false, comm.VerifyCaptchaErr, err
 	}
-	return success, 0, nil
+	return success, comm.SuccessCode, nil
 }

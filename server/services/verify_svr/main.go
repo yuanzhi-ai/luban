@@ -55,10 +55,10 @@ func (s *server) VerifyCode(ctx context.Context, req *verify_proto.VerifyCodeReq
 	// 默认验证失败
 	rsp := &verify_proto.VerifyCodeRsp{RetCode: comm.VerifyCaptchaErr}
 	success, retCode, err := verifyCode(ctx, req.CodeId, req.Ans)
-	if err != nil || retCode != 0 || !success {
+	if err != nil || retCode != comm.SuccessCode || !success {
 		log.Errorf("verify code err:%v", err)
 		return rsp, err
 	}
-	rsp.RetCode = 0
+	rsp.RetCode = comm.SuccessCode
 	return rsp, nil
 }

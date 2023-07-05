@@ -18,10 +18,10 @@ const (
 	errSkey = ""
 	// CaptchaSkey 验证码秘钥存枚举
 	CaptchaSkey     = "capthca"
-	captchaSkeyPath = "./skey/captchaSkey.txt"
+	captchaSkeyPath = "./app_data/skey/captchaSkey.txt"
 	// 登录注册的秘钥枚举
 	LoginRegisterSkey     = "login"
-	LoginRegisterSkeyPath = "./skey/loginSkey.txt"
+	LoginRegisterSkeyPath = "./app_data/skey/loginSkey.txt"
 )
 
 type skey struct {

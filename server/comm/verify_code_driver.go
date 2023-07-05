@@ -24,12 +24,11 @@ const (
 	defaultWidth = 310
 	defaultHight = 155
 	VerifyLen    = 6
-	defaultDpi   = 72
 	chars        = "ABCDEFGHIJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"
 	charsLen     = len(chars)
-	fontPath     = ""
-	fontName     = ""
-	fontSize     = 0.0
+	fontPath     = "./app_data/captcha/fonts/"
+	fontName     = "DENNEthree-dee.ttf"
+	fontSize     = 12
 )
 
 // 图像验证码
@@ -175,9 +174,6 @@ func (cg *CaptchaGenerator) setFont(gc *draw2dimg.GraphicContext) error {
 	gc.FontCache = draw2d.NewSyncFolderFontCache(fontPath)
 	gc.FontCache.Store(draw2d.FontData{Name: fontName, Family: 0, Style: draw2d.FontStyleNormal}, font)
 	gc.SetFontData(draw2d.FontData{Name: fontName, Style: draw2d.FontStyleNormal})
-
-	//设置清晰度
-	gc.SetDPI(defaultDpi)
 
 	// 设置字体大小
 	gc.SetFontSize(fontSize)

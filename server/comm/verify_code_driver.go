@@ -281,6 +281,6 @@ func (cg *CaptchaGenerator) base64Img(dest *image.RGBA) string {
 	dist := make([]byte, 50000)
 	base64.StdEncoding.Encode(dist, emptyBuff.Bytes())
 	index := bytes.IndexByte(dist, 0)
-	baseImage := string(dist[0:index])
+	baseImage := "data:image/png;base64," + string(dist[0:index])
 	return baseImage
 }

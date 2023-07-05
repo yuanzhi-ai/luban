@@ -18,6 +18,6 @@ WORKDIR /app
 
 COPY --from=builder /app/verify_svr .
 
-EXPOSE 8080
+EXPOSE 3360
 
 CMD ["/app/verify_svr"]

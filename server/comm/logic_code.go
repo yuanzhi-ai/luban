@@ -6,11 +6,9 @@ const (
 	/*通用错误码*/
 	SuccessCode int32 = 0
 	InputErr    int32 = 1007 // 入参数错误
-	/*chat svr 错误码
+	/*verify svr 错误码
 	2000 ~ 2999
 	*/
-	RemoteGetAllNpcInfoErr int32 = 2000  // 远程rpc获取npc信息错误
-	UnknownNPC             int32 = 20001 // 未知npc
-	SessionExist           int32 = 20002 // 会话已存在
-	SessionNotExist        int32 = 20003 // 会话不存在
+	GeneratorCaptchaErr int32 = 2000  // 生成验证码失败
+	VerifyCaptchaErr    int32 = 20001 // 检验验证码失败
 )

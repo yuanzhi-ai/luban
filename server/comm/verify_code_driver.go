@@ -23,7 +23,7 @@ import (
 const (
 	defaultWidth = 310
 	defaultHight = 155
-	verifyLen    = 6
+	VerifyLen    = 6
 	defaultDpi   = 72
 	chars        = "ABCDEFGHIJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"
 	charsLen     = len(chars)
@@ -42,7 +42,7 @@ type CaptchaGenerator struct {
 
 // GetNewCaptchaGenerator 获取一个验证码生成器
 func GetNewCaptchaGenerator() *CaptchaGenerator {
-	cg := CaptchaGenerator{w: defaultWidth, h: defaultHight}
+	cg := CaptchaGenerator{w: defaultWidth, h: defaultHight, codeLen: VerifyLen}
 	return &cg
 }
 
@@ -71,7 +71,20 @@ func (cg *CaptchaGenerator) GetCaptcha() (string, string, error) {
 	// capImg 转base64 url
 	encodeImg := cg.base64Img(capImg)
 	return capId, encodeImg, nil
+}
 
+func (cg *CaptchaGenerator) VerifyCode(capId string, userAnswer string) (bool, error) {
+	skeyInstance := GetSkeyInstance()
+	capSkey, err := skeyInstance.GetSkey(CaptchaSkey)
+	if err != nil || capSkey == "" {
+		log.Errorf("get capSkey err:%v", err)
+		return false, err
+	}
+	singAnswer := Md5Encode(userAnswer + capSkey)
+	if capId != singAnswer {
+		return false, nil
+	}
+	return true, nil
 }
 
 // 获取区间[-m, n]的随机数

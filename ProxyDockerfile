@@ -4,13 +4,13 @@ RUN mkdir /app
 
 ADD . /app/
 
-WORKDIR /app/services/proxy_svr
+WORKDIR /app/server/services/proxy_svr
 
 RUN go get
 
 WORKDIR /app
 
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o http_proxy ./services/proxy_svr
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o http_proxy ./server/services/proxy_svr
 
 FROM alpine:latest
 

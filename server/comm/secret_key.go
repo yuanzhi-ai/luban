@@ -17,7 +17,7 @@ const (
 	// errSkey 读取skey失败时的标识
 	errSkey = ""
 	// CaptchaSkey 验证码秘钥存枚举
-	CaptchaSkey     = "capthca"
+	CaptchaSkey     = "captcha"
 	captchaSkeyPath = "./app_data/skey/captchaSkey.txt"
 	// 登录注册的秘钥枚举
 	LoginRegisterSkey     = "login"
@@ -59,6 +59,7 @@ func (s *skey) GetSkey(skeyMod string) (string, error) {
 func (s *skey) init() {
 	// 这里初始化所有的秘钥到文件里
 	s.skeyFilePaths = map[string]string{CaptchaSkey: captchaSkeyPath, LoginRegisterSkey: LoginRegisterSkeyPath}
+	s.reloadAllSkey()
 	// 每5分钟重新load一次秘钥
 	c := cron.New()
 	_, err := c.AddFunc("*/5 * * * *", reloadSkey)
@@ -78,6 +79,7 @@ func reloadSkey() {
 
 // reloadAllSkey 重新加载所有的skey
 func (s *skey) reloadAllSkey() {
+	s.allSkeys = make(map[string]string)
 	for skeyMod := range s.skeyFilePaths {
 		s.readSkeyFile(skeyMod)
 	}

@@ -22,8 +22,8 @@ func getMachineVerify(ctx context.Context) (string, string, int32, error) {
 	client := verify_proto.NewVerifyClient(grpcConn)
 	defer grpcConn.Close()
 	rsp, err := client.GetVerCode(ctx, verifyReq)
-	if err != nil || rsp.RetCode != comm.SuccessCode {
-		rspErr := fmt.Errorf("RPC GetVerCode fial retCode:%v err:%v", rsp.RetCode, err)
+	if err != nil {
+		rspErr := fmt.Errorf("RPC GetVerCode fial err:%v", err)
 		log.Errorf("%v", rspErr)
 		return "", "", comm.GetVerCodeErr, rspErr
 	}

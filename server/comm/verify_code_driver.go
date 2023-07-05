@@ -156,7 +156,7 @@ func (cg *CaptchaGenerator) doImage(code string, dest *image.RGBA) (*image.RGBA,
 func (cg *CaptchaGenerator) setFont(gc *draw2dimg.GraphicContext) error {
 
 	// 字体文件
-	fontFile := strings.TrimRight(fontPath, "/") + "/" + strings.TrimLeft(fontName, "/") + ".ttf"
+	fontFile := strings.TrimRight(fontPath, "/") + "/" + strings.TrimLeft(fontName, "/")
 
 	fontBytes, err := os.ReadFile(fontFile)
 	if err != nil {

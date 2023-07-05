@@ -1,0 +1,23 @@
+FROM registry.cn-hangzhou.aliyuncs.com/shining_star/golang_base:latest as builder
+
+RUN mkdir /app
+
+ADD . /app/
+
+WORKDIR /app/server/services/login_svr
+
+RUN go get
+
+WORKDIR /app
+
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o login_svr ./server/services/login_svr
+
+FROM alpine:latest
+
+WORKDIR /app
+
+COPY --from=builder /app/login_svr .
+
+EXPOSE 8080
+
+CMD ["/app/login_svr"]

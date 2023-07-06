@@ -27,7 +27,7 @@ var lock sync.Mutex
 
 func init() {
 	var err error
-	mylogger.logFile = fmt.Sprintf("./app_data/log/%v.log", time.Now().Format("20060102"))
+	mylogger.logFile = fmt.Sprintf("./log/%v.log", time.Now().Format("20060102"))
 	mylogger.fileWriter, err = os.OpenFile(mylogger.logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err != nil {
 		log.Panic("打开日志文件异常")

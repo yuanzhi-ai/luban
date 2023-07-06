@@ -52,7 +52,7 @@ func GetNewCaptchaGenerator() *CaptchaGenerator {
 // 返回 验证码id， 验证码的url，和是否出错
 func (cg *CaptchaGenerator) GetCaptcha() (string, string, error) {
 	// 生成一个随机验证码
-	captcha := cg.getRandStr()
+	captcha := strings.ToUpper(cg.getRandStr())
 	skeyInstance := GetSkeyInstance()
 	capSkey, err := skeyInstance.GetSkey(CaptchaSkey)
 	if err != nil || capSkey == "" {
@@ -79,7 +79,7 @@ func (cg *CaptchaGenerator) VerifyCode(capId string, userAnswer string) (bool, e
 		log.Errorf("get capSkey err:%v", err)
 		return false, err
 	}
-	singAnswer := Md5Encode(userAnswer + capSkey)
+	singAnswer := Md5Encode(strings.ToUpper(userAnswer) + capSkey)
 	if capId != singAnswer {
 		return false, nil
 	}
@@ -260,9 +260,9 @@ func (cg *CaptchaGenerator) doSinLine(gc *draw2dimg.GraphicContext) {
 func (cg *CaptchaGenerator) doCode(gc *draw2dimg.GraphicContext, code string) {
 	xPoints := make([]float64, 0)
 	yPoints := float64(cg.h / 2.0)
-	widGap := cg.w / len(code)
+	widGap := (cg.w - 10) / len(code)
 	for i := 0; i < len(code); i++ {
-		xPoints = append(xPoints, float64(widGap*i))
+		xPoints = append(xPoints, float64(widGap*i+5))
 	}
 	for l := 0; l < len(code); l++ {
 		x := xPoints[l]

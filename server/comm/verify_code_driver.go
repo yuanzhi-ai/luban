@@ -24,11 +24,11 @@ const (
 	defaultWidth = 310
 	defaultHight = 155
 	VerifyLen    = 6
-	chars        = "ABCDEFGHIJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"
+	chars        = "ABCDEFGHIJKMNPQRSTUVWXYZ23456789"
 	charsLen     = len(chars)
 	fontPath     = "/app/app_data/captcha/fonts/"
-	fontName     = "DENNEthree-dee.ttf"
-	fontSize     = 12
+	fontName     = "ApothecaryFont.ttf"
+	fontSize     = 24
 )
 
 // 图像验证码
@@ -240,7 +240,7 @@ func (cg *CaptchaGenerator) doSinLine(gc *draw2dimg.GraphicContext) {
 	b := uint8(cg.RangeRand(128, 255))
 
 	gc.SetStrokeColor(color.RGBA{r, g, b, 255})
-	gc.SetLineWidth(float64(cg.RangeRand(2, 4)))
+	gc.SetLineWidth(float64(0.5))
 
 	var i float64
 	for i = -w / 2; i < w/2; i = i + 0.1 {
@@ -258,17 +258,22 @@ func (cg *CaptchaGenerator) doSinLine(gc *draw2dimg.GraphicContext) {
 
 // 验证码字符设置到图像上
 func (cg *CaptchaGenerator) doCode(gc *draw2dimg.GraphicContext, code string) {
+	xPoints := make([]float64, 0)
+	yPoints := float64(cg.h / 2.0)
+	widGap := cg.w / len(code)
+	for i := 0; i < len(code); i++ {
+		xPoints = append(xPoints, float64(widGap*i))
+	}
 	for l := 0; l < len(code); l++ {
-		y := cg.RangeRand(int64(fontSize)-1, int64(cg.h)+6)
-		x := cg.RangeRand(1, 20)
-
+		x := xPoints[l]
+		y := yPoints
 		// 随机色
 		r := uint8(cg.RangeRand(0, 200))
 		g := uint8(cg.RangeRand(0, 200))
 		b := uint8(cg.RangeRand(0, 200))
 
 		gc.SetFillColor(color.RGBA{r, g, b, 255})
-		gc.FillStringAt(string(code[l]), float64(x)+fontSize*float64(l), float64(int64(cg.h)-y)+fontSize)
+		gc.FillStringAt(string(code[l]), x, y)
 		gc.Stroke()
 	}
 }

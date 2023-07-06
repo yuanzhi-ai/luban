@@ -26,7 +26,7 @@ const (
 	VerifyLen    = 6
 	chars        = "ABCDEFGHIJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"
 	charsLen     = len(chars)
-	fontPath     = "./captcha/fonts/"
+	fontPath     = "/app/app_data/captcha/fonts/"
 	fontName     = "DENNEthree-dee.ttf"
 	fontSize     = 12
 )

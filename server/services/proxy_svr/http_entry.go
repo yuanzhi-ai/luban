@@ -8,9 +8,11 @@ import (
 	"time"
 
 	"github.com/yuanzhi-ai/luban/go_proto/login_proto"
+	"github.com/yuanzhi-ai/luban/server/auth"
 	"github.com/yuanzhi-ai/luban/server/comm"
 	"github.com/yuanzhi-ai/luban/server/log"
 	"github.com/yuanzhi-ai/luban/server/transer"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -64,6 +66,7 @@ func getMachineVerifyHandler(w http.ResponseWriter, r *http.Request) {
 	log.Debugf("req:%+v rsp:%+v", req, rsp)
 }
 
+// sendMachineVerifyResultHandler 人机验证码回包
 func sendMachineVerifyResultHandler(w http.ResponseWriter, r *http.Request) {
 	log.Debugf("into sendMachineVerifyResultHandler")
 	req := &login_proto.SendMachineVerifyResultReq{}
@@ -91,5 +94,12 @@ func sendMachineVerifyResultHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Debugf("req:%+v rsp:%+v", req, rsp)
-
+	// 验证成功的带上jwt做游客态签名
+	// 这里的游客态id是否需要单独生成
+	jwt, err := auth.GeneratorJwt(auth.MachineJwtType, map[string]interface{}{"owner": req.CodeId})
+	if err != nil {
+		log.Errorf("GeneratorJwt err:%v", err)
+		return
+	}
+	w.Header().Set("Token", jwt)
 }

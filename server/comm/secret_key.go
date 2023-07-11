@@ -22,6 +22,9 @@ const (
 	// 登录注册的秘钥枚举
 	LoginRegisterSkey     = "login"
 	LoginRegisterSkeyPath = "/app/app_data/skey/loginSkey.txt"
+	// jwt签名秘钥
+	JwtSkey     = "jwt"
+	JwtSkeyPath = "/app/app_data/skey/jwtSkey.txt"
 )
 
 type skey struct {

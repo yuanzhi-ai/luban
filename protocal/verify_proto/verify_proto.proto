@@ -19,9 +19,10 @@ message GetVerCodeReq{
 
 // 获取验证码回包
 message GetVerCodeRsp{
-    string code_id = 1; // 验证码的id
-    string base64_img = 2; // base64表示的验证码
-    int32 ret_code = 3; // 错误码 0成功 其他失败
+    int32 ret_code = 1; // 错误码 0成功 其他失败
+    string code_id = 2; // 验证码的id
+    string base64_img = 3; // base64表示的验证码
+
 }
 
 // 验证验证码请求包

@@ -37,9 +37,10 @@ message GetMachineVerifyReq{
 }
 
 message GetMachineVerifyRsp{
-    string code_id = 1; // 验证码的id
-    string base64_img = 2; // base64表示的验证码
-    int32 ret_code = 3; // 错误码 0成功 其他失败
+    int32 ret_code = 1; // 错误码 0成功 其他失败
+    string code_id = 2; // 验证码的id
+    string base64_img = 3; // base64表示的验证码
+
 }
 
 // 发送人机验证结果请求包
@@ -49,7 +50,7 @@ message SendMachineVerifyResultReq{
 }
 
 message SendMachineVerifyResultRsp{
-    int32 ret_code = 2; // 0成功 其他失败
+    int32 ret_code = 1; // 0成功 其他失败
 }
 
 // 向用户发送一个验证码短信求情包

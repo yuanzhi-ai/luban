@@ -86,6 +86,7 @@ message UserPhoneLoginRsp{
 message UserRegisterReq{
     string phone_number = 1; // 手机号码
     string ver_code =2; // 验证码
+    string passwd = 3;  // 用户密码
 }
 
 message UserRegisterRsp{

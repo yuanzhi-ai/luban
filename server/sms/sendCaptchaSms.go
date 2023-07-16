@@ -13,7 +13,7 @@ import (
 	"github.com/yuanzhi-ai/luban/server/log"
 )
 
-func CreateClient(accessKeyId *string, accessKeySecret *string) (_result *dysmsapi20170525.Client, _err error) {
+func createClient(accessKeyId *string, accessKeySecret *string) (_result *dysmsapi20170525.Client, _err error) {
 	config := &openapi.Config{
 		// 必填，您的 AccessKey ID
 		AccessKeyId: accessKeyId,
@@ -28,7 +28,7 @@ func CreateClient(accessKeyId *string, accessKeySecret *string) (_result *dysmsa
 
 // 发送短信验证码
 func SendMsg(code string, phoneNumber string) error {
-	client, err := CreateClient(tea.String(os.Getenv("ALIBABA_CLOUD_ACCESS_KEY_ID")), tea.String(os.Getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET")))
+	client, err := createClient(tea.String(os.Getenv("ALIBABA_CLOUD_ACCESS_KEY_ID")), tea.String(os.Getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET")))
 	if err != nil {
 		return err
 	}

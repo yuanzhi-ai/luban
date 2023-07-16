@@ -70,6 +70,11 @@ func (s *server) SendTextVerCode(ctx context.Context, req *login_proto.SendTextV
 	return nil, nil
 }
 
+func (s *server) UserRegister(ctx context.Context, req *login_proto.UserRegisterReq) (
+	*login_proto.UserRegisterRsp, error) {
+	return nil, nil
+}
+
 func (s *server) UserPswdLogin(ctx context.Context, req *login_proto.UserPswdLoginReq) (
 	*login_proto.UserPswdLoginRsp, error) {
 	return nil, nil
@@ -77,11 +82,6 @@ func (s *server) UserPswdLogin(ctx context.Context, req *login_proto.UserPswdLog
 
 func (s *server) UserPhoneLogin(ctx context.Context, req *login_proto.UserPhoneLoginReq) (
 	*login_proto.UserPhoneLoginRsp, error) {
-	return nil, nil
-}
-
-func (s *server) UserRegister(ctx context.Context, req *login_proto.UserRegisterReq) (
-	*login_proto.UserRegisterRsp, error) {
 	return nil, nil
 }
 

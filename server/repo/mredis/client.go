@@ -8,6 +8,10 @@ import (
 
 var rdb *redis.Client
 
+const (
+	EmptyKeyErr = redis.Nil
+)
+
 func init() {
 	rdb = redis.NewClient(&redis.Options{
 		Addr:     os.Getenv("WANXIANG_REDIS_ADDR"),

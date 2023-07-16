@@ -12,6 +12,7 @@ const (
 	*/
 	GeneratorCaptchaErr int32 = 2000  // 生成验证码失败
 	VerifyCaptchaErr    int32 = 20001 // 检验验证码失败
+	CaptchaUsed         int32 = 20002 // 验证码已经用过了
 
 	/*login svr 错误码
 	3000 ~ 3999

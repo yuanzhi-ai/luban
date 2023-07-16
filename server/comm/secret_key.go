@@ -35,17 +35,15 @@ type skey struct {
 }
 
 var instance *skey
-var instanceLock sync.Mutex
 var skeyLock sync.Mutex // skey的锁
+
+func init() {
+	instance = &skey{}
+	instance.init()
+}
 
 // GetSkeyInstance 获取skey实例
 func GetSkeyInstance() *skey {
-	if instance == nil {
-		instanceLock.Lock()
-		instance = &skey{}
-		instance.init()
-		instanceLock.Unlock()
-	}
 	return instance
 }
 
@@ -73,10 +71,11 @@ func (s *skey) init() {
 
 }
 
+// 每5分钟重置一次秘钥
 func reloadSkey() {
 	skeyLock.Lock()
 	defer skeyLock.Unlock()
-	instance := GetSkeyInstance()
+	instance := &skey{skeyFilePaths: map[string]string{CaptchaSkey: captchaSkeyPath, LoginRegisterSkey: LoginRegisterSkeyPath}}
 	instance.reloadAllSkey()
 }
 

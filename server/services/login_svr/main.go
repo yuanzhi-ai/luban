@@ -51,6 +51,7 @@ func (s *server) GetMachineVerify(ctx context.Context, req *login_proto.GetMachi
 	return rsp, nil
 }
 
+// 发送验证码结果
 func (s *server) SendMachineVerifyResult(ctx context.Context, req *login_proto.SendMachineVerifyResultReq) (
 	*login_proto.SendMachineVerifyResultRsp, error) {
 	rsp := &login_proto.SendMachineVerifyResultRsp{RetCode: comm.VerifyCodeErr}
@@ -63,6 +64,7 @@ func (s *server) SendMachineVerifyResult(ctx context.Context, req *login_proto.S
 	return rsp, nil
 }
 
+// 发送一个短信验证码
 func (s *server) SendTextVerCode(ctx context.Context, req *login_proto.SendTextVerCodeReq) (
 	*login_proto.SendTextVerCodeRsp, error) {
 	return nil, nil

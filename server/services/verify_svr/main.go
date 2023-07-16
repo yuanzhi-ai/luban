@@ -18,7 +18,12 @@ const (
 	PORT = "3360"
 )
 
+func myInit() {
+	captchaSet.init()
+}
+
 func main() {
+	myInit()
 	lis, err := net.Listen("tcp", ":"+PORT)
 	if err != nil {
 		log.Errorf("ERROR failed to listen:%v", err)

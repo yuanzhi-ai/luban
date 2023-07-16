@@ -25,10 +25,16 @@ func verifyCode(ctx context.Context, capId string, userAnswer string) (bool, int
 		return false, comm.InputErr, fmt.Errorf(
 			"error input params. len(capId):%v len(userAnswer):%v", len(capId), len(userAnswer))
 	}
+	// 先在缓存里找，用过的直接验证失败
+	if captchaSet.isCaptchaUsed(capId) {
+		return false, comm.CaptchaUsed, nil
+	}
 	captchaGenerator := comm.GetNewCaptchaGenerator()
 	success, err := captchaGenerator.VerifyCode(capId, userAnswer)
 	if err != nil {
 		return false, comm.VerifyCaptchaErr, err
 	}
+	// 成功的验证码加入缓存
+	captchaSet.addCaptcha(capId)
 	return success, comm.SuccessCode, nil
 }

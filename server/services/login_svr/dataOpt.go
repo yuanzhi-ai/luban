@@ -60,7 +60,7 @@ func insterUserRegristerInfo(ctx context.Context, info *UserInfo) error {
 	sql := fmt.Sprintf("insert into %s.%s (f_uid,f_phone,f_s2,f_nickname,f_register_ts,f_last_login_ts) value(?,?,?,?,?,?)", UserInfoDB, UserInfoTable)
 	rowAffect, err := cl.Exec(sql, info.Uid.String, info.Phone.String, info.S2.String, info.Nickname.String, info.RegisterTs.Int64, info.LastLoginTs.Int64)
 	if err != nil || rowAffect != 1 {
-		return fmt.Errorf("invalid to insert err:%v, rowAffect:%v, user info:%+v", err, rowAffect, info)
+		return fmt.Errorf("invalid insert user info err:%v, rowAffect:%v, user info:%+v", err, rowAffect, info)
 	}
 	return nil
 }
@@ -73,7 +73,7 @@ type S2 struct {
 // @param uid 用户的uid
 func getUserS2(ctx context.Context, phone string) (string, error) {
 	uid := comm.Md5Encode(phone)
-	sql := fmt.Sprintf("select f_s2 from %v.%v wher uid= ?", UserInfoDB, UserInfoTable)
+	sql := fmt.Sprintf("select f_s2 from %v.%v where f_uid= ?", UserInfoDB, UserInfoTable)
 	rows, err := cl.Query(sql, (*S2)(nil), uid)
 	if err != nil || len(rows) != 1 {
 		return "", fmt.Errorf("query phone s2 fail. rows:%+v err:%v ", rows, err)
@@ -83,4 +83,16 @@ func getUserS2(ctx context.Context, phone string) (string, error) {
 		return "", fmt.Errorf("query user s2 fail. row:%+v", rows)
 	}
 	return res.S2.String, nil
+}
+
+// updateLoginTs 更新登录时间戳
+func updateLoginTs(ctx context.Context, phone string) error {
+	uid := comm.Md5Encode(phone)
+	loginTs := time.Now().Unix()
+	sql := fmt.Sprintf("insert into %s.%s (f_last_login_ts) value(?) where f_uid=?", UserInfoDB, UserInfoTable)
+	rowAffect, err := cl.Exec(sql, loginTs, uid)
+	if err != nil || rowAffect != 1 {
+		return fmt.Errorf("insert login ts fail. uid:%v err:%v", uid, err)
+	}
+	return nil
 }

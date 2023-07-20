@@ -165,7 +165,11 @@ func passwordLogin(ctx context.Context, phone string, a1 string) (int32, error) 
 	if clinetS2 != dbS2 {
 		return comm.LoginErr, fmt.Errorf("check s2 fail. clients2:%v dbs2:%v", clinetS2, dbS2)
 	}
-
+	// 更新时间戳 柔性
+	err = updateLoginTs(ctx, phone)
+	if err != nil {
+		log.Errorf("update login ts err:%v", err)
+	}
 	return comm.SuccessCode, nil
 }
 

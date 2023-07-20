@@ -4,7 +4,6 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"os"
 	"reflect"
 	"strings"
 
@@ -17,29 +16,33 @@ const (
 	maxIdleConns = 1000
 )
 
-var dbClient *sql.DB
+// Client mysql存储对象
+type Client struct {
+	db *sql.DB
+}
 
-func init() {
-	path := fmt.Sprintf("%v:%v@tcp(%v:%v)/db_action_4", os.Getenv("WANXIANG_DB_USER"),
-		os.Getenv("WANXIANG_DB_PSWD"), os.Getenv("WANXIANG_DB_IP"), os.Getenv("WANXIANG_DB_PORT"))
-	dbClient, err := sql.Open("mysql", path)
+// NewClient 新建client
+func NewClient(userName string, passwd string, ip string, port string, database string) (*Client, error) {
+	path := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", userName, passwd, ip, port, database)
+	db, err := sql.Open("mysql", path)
 	if err != nil {
 		log.Errorf("sql.Open err: %+v", err)
-		panic("init sql err")
+		return nil, err
 	}
 	//设置数据库最大连接数
-	dbClient.SetConnMaxLifetime(maxConns)
+	db.SetConnMaxLifetime(maxConns)
 	//设置上数据库最大闲置连接数
-	dbClient.SetMaxIdleConns(maxIdleConns)
+	db.SetMaxIdleConns(maxIdleConns)
 	//验证连接
-	if err := dbClient.Ping(); err != nil {
+	if err := db.Ping(); err != nil {
 		log.Errorf("open database fail, path: %+v", path)
-		panic("conn db err")
+		return nil, err
 	}
+	return &Client{db: db}, nil
 }
 
 // Query 请求存储获取结果
-func Query(str string, rowStruct interface{}, args ...interface{}) ([]interface{}, error) {
+func (d *Client) Query(str string, rowStruct interface{}, args ...interface{}) ([]interface{}, error) {
 	typ := reflect.TypeOf(rowStruct).Elem()
 	var fieldNames []string
 	for i := 0; i < typ.NumField(); i++ {
@@ -52,7 +55,7 @@ func Query(str string, rowStruct interface{}, args ...interface{}) ([]interface{
 	}
 	str = strings.Replace(str, " * ", " "+strings.Join(fieldNames, ",")+" ", 1)
 
-	rows, err := dbClient.Query(str, args...)
+	rows, err := d.db.Query(str, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -73,8 +76,8 @@ func Query(str string, rowStruct interface{}, args ...interface{}) ([]interface{
 }
 
 // Exec 执行增删改
-func Exec(str string, args ...interface{}) (rowsAffected int64, err error) {
-	res, err := dbClient.Exec(str, args...)
+func (d *Client) Exec(str string, args ...interface{}) (rowsAffected int64, err error) {
+	res, err := d.db.Exec(str, args...)
 	if err != nil {
 		return 0, err
 	}

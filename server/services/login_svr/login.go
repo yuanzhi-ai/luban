@@ -2,7 +2,12 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/hex"
 	"fmt"
+	"strconv"
+	"strings"
+	"time"
 
 	"github.com/yuanzhi-ai/luban/go_proto/verify_proto"
 	"github.com/yuanzhi-ai/luban/server/comm"
@@ -58,7 +63,7 @@ const (
 
 // 向手机发送一个验证码
 func sendTextVerCode(ctx context.Context, phone string) (int32, error) {
-	// 判读手机号是否合法
+	// 判断手机号是否合法
 	if !comm.IsPhoneLegal(phone) {
 		return comm.InputErr, fmt.Errorf("input phone:%v legal", phone)
 	}
@@ -111,10 +116,85 @@ func register(ctx context.Context, phone string, code string, pswd string) (int3
 		return retCode, err
 	}
 	// 向数据库插入用户记录
+	userInfo, err := generatorUserRegister(phone, pswd)
+	if err != nil {
+		return comm.GeneratorUserInfoErr, err
+	}
+	err = insterUserRegristerInfo(ctx, userInfo)
+	if err != nil {
+		return comm.InsertUserRegisterInfoErr, err
+	}
 	return comm.SuccessCode, nil
 }
 
 // passwordLogin 手机号+密码登录
-func passwordLogin(ctx context.Context, phone string, al string) (int32, error) {
+func passwordLogin(ctx context.Context, phone string, a1 string) (int32, error) {
+	//从数据库拿用户的DB_A1
+	dbS2, err := getUserS2(ctx, phone)
+	if err != nil {
+		return comm.QueryS2Err, fmt.Errorf("getUserS2 fail. err:%v", err)
+	}
+	// 对dbs2做16进制解码
+	dbKey, err := hex.DecodeString(dbS2)
+	if err != nil {
+		return comm.HexDBS2Err, fmt.Errorf("hex Decode fail. dbS2:%v err:%v", dbS2, err)
+	}
+	// 对前端传来的a1做base64解码
+	uA1, err := base64.StdEncoding.DecodeString(a1)
+	if err != nil {
+		return comm.DecodeA1Err, err
+	}
+	// 尝试使用dbS2对uA1解码
+	decA1 := comm.AesDecryptCBC(uA1, dbKey)
+	a1Data, err := getA1ValueFromData(string(decA1))
+	if err != nil {
+		return comm.DercyA1Err, err
+	}
+	// 比较解码的phone与请求的phone是否一致
+	if phone != a1Data.phone {
+		return comm.LoginErr, fmt.Errorf("check login fail, diff phone. req phone:%v decrypt phone:%v", phone, a1Data.phone)
+	}
+	// 比较时间戳
+	now := time.Now().Unix()
+	tsGap := now - a1Data.ts
+	if tsGap > 5*60 || tsGap < -5*60 {
+		return comm.LoginErr, fmt.Errorf("check loging ts fail. svr ts:%v client:%v tsGap:%v", now, a1Data.ts, tsGap)
+	}
+	// 比较重新计算的s2 与db s2
+	clinetS2 := comm.Md5Encode(a1Data.phone + a1Data.md5Pswd)
+	if clinetS2 != dbS2 {
+		return comm.LoginErr, fmt.Errorf("check s2 fail. clients2:%v dbs2:%v", clinetS2, dbS2)
+	}
+
 	return comm.SuccessCode, nil
+}
+
+type a1Data struct {
+	phone string // 手机号
+
+	md5Pswd string // md5(password)
+
+	ts int64 // 登录的前端时间戳
+
+	randomKey string // 随机key
+}
+
+// 获取解码后的数据
+func getA1ValueFromData(uData string) (*a1Data, error) {
+
+	datas := strings.Split(uData, ";")
+	if len(datas) != 4 {
+		return nil, fmt.Errorf("decode A1Data fail. UData:%v", uData)
+	}
+	ts, err := strconv.ParseInt(datas[2], 10, 64)
+	if err != nil {
+		return nil, fmt.Errorf("decode A1Data fail, ts is wrong. ts:%v", datas[2])
+	}
+	uA1 := &a1Data{
+		phone:     datas[0],
+		md5Pswd:   datas[1],
+		ts:        ts,
+		randomKey: datas[3],
+	}
+	return uA1, nil
 }

@@ -19,10 +19,18 @@ const (
 	/*login svr 错误码
 	3000 ~ 3999
 	*/
-	GetVerCodeErr     int32 = 3000 // 获取验证码失败
-	VerifyCodeErr     int32 = 3001 // 验证验证码失败
-	CapchaCodeWrong   int32 = 3002 // 验证码错误
-	QueryPhoneCodeErr int32 = 3003 // 查询手机验证码错误
-	CodeExpiration    int32 = 3004 // 验证码过期
-	PhoneCodeWrong    int32 = 3005 // 验证码错误
+	GetVerCodeErr             int32 = 3000 // 获取验证码失败
+	VerifyCodeErr             int32 = 3001 // 验证验证码失败
+	CapchaCodeWrong           int32 = 3002 // 验证码错误
+	QueryPhoneCodeErr         int32 = 3003 // 查询手机验证码错误
+	CodeExpiration            int32 = 3004 // 验证码过期
+	PhoneCodeWrong            int32 = 3005 // 验证码错误
+	GeneratorUserInfoErr      int32 = 3006 // 生成用户注册信息错误
+	InsertUserRegisterInfoErr int32 = 3007 // 写入用户注册信息错误
+	QueryS2Err                int32 = 3008 //查询s2失败
+	DercyA1Err                int32 = 3009 // 解码a1失败
+	HexDBS2Err                int32 = 3010 //16进制解码db_s2失败
+	DecodeA1Err               int32 = 3011 // 解码a1失败
+	LoginErr                  int32 = 3012 //登录失败
+
 )

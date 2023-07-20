@@ -25,6 +25,9 @@ const (
 	// jwt签名秘钥
 	JwtSkey     = "jwt"
 	JwtSkeyPath = "/app/app_data/skey/jwtSkey.txt"
+	// 手机号加密秘钥
+	PhoneSkey     = "phone"
+	PhoneSkeyPath = "/app/app_data/skey/phoneSkey.txt"
 )
 
 type skey struct {

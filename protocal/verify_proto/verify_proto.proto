@@ -9,7 +9,7 @@ service Verify{
     // 获取验证码
     rpc GetVerCode(GetVerCodeReq) returns(GetVerCodeRsp) {};
     // 验证验证码
-    rpc verifyCode(verifyCodeReq) returns(verifyCodeRsp) {};
+    rpc VerifyCode(VerifyCodeReq) returns(VerifyCodeRsp) {};
 }
 
 // GetVerCodeReq 获取验证码请求包
@@ -26,12 +26,12 @@ message GetVerCodeRsp{
 }
 
 // 验证验证码请求包
-message verifyCodeReq{
+message VerifyCodeReq{
     string code_id = 1; // 验证码的id
     string ans = 2; // 提交的答案
 }
 
 // 验证验证码回包
-message verifyCodeRsp{
+message VerifyCodeRsp{
     int32 ret_code = 1; //错误码 0成功 其他失败
 }

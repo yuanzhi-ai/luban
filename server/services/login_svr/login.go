@@ -111,9 +111,14 @@ func verifyPhoneCode(ctx context.Context, phone string, inCode string) (int32, e
 
 // register 用户注册
 func register(ctx context.Context, phone string, code string, pswd string) (int32, error) {
+	// 验证手机验证码
 	retCode, err := verifyPhoneCode(ctx, phone, code)
 	if err != nil || retCode != comm.SuccessCode {
 		return retCode, err
+	}
+	//验证密码
+	if !comm.IsPswdLegal(pswd) {
+		return comm.PswdLegalErr, fmt.Errorf("pswd is not legal. phone:%v, pswd:%v", phone, pswd)
 	}
 	// 向数据库插入用户记录
 	userInfo, err := generatorUserRegister(phone, pswd)
@@ -201,4 +206,24 @@ func getA1ValueFromData(uData string) (*a1Data, error) {
 		randomKey: datas[3],
 	}
 	return uA1, nil
+}
+
+// resetPswd 重置密码
+func resetPswd(ctx context.Context, phone string, verCode string, newPswd string) (int32, error) {
+	//验证密码
+	if !comm.IsPswdLegal(newPswd) {
+		return comm.PswdLegalErr, fmt.Errorf("pswd is not legal. phone:%v, pswd:%v", phone, newPswd)
+	}
+	// 验证手机验证码
+	retCode, err := verifyPhoneCode(ctx, phone, verCode)
+	if err != nil || retCode != comm.SuccessCode {
+		return retCode, err
+	}
+	// 更新s2
+	err = updatePswd(ctx, phone, newPswd)
+	if err != nil {
+		return comm.UpdatePswdErr, err
+	}
+	return comm.SuccessCode, nil
+
 }

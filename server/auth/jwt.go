@@ -5,14 +5,11 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/yuanzhi-ai/luban/server/comm"
 	"github.com/yuanzhi-ai/luban/server/log"
-)
-
-const (
-	MachineJwtType = "machineAuth"
 )
 
 // Jwt 类型的接口
@@ -23,26 +20,14 @@ type Jwt interface {
 // JwtHead jwt的头
 var JwtHead string
 
-func initJwtHead() error {
-	if JwtHead == "" {
-		jwtHead := map[string]string{"alg": "md5", "type": "JWT"}
-		jsonHead, err := json.Marshal(jwtHead)
-		if err != nil {
-			log.Errorf("json marshal jwt head:%v err:%v", jwtHead, err)
-			return err
-		}
-		JwtHead = base64.StdEncoding.EncodeToString(jsonHead)
-	}
-	return nil
+func init() {
+	jwtHeadTmp := map[string]string{"alg": "md5", "type": "JWT"}
+	jsonHead, _ := json.Marshal(jwtHeadTmp)
+	JwtHead = base64.StdEncoding.EncodeToString(jsonHead)
 }
 
 // jwtEncode 对消息体进行jwt编码
 func jwtEncode(payload map[string]interface{}) (string, error) {
-	err := initJwtHead()
-	if err != nil {
-		log.Errorf("init jwt head err:%v", err)
-		return "", err
-	}
 	// 对消息体编码
 	jsonPayload, err := json.Marshal(payload)
 	if err != nil {
@@ -64,32 +49,26 @@ func jwtEncode(payload map[string]interface{}) (string, error) {
 	return jwtSignature, nil
 }
 
-// 通用jwt结构
-type GeneralJwt struct {
-}
-
-// GeneratorJWT 通用的Jwt签名
-func (j *GeneralJwt) generatorJWT(payload map[string]interface{}) (string, error) {
-	jwtSignature, err := jwtEncode(payload)
+func GeneratorJWT(owner string, api string, expTs int64) (string, error) {
+	nowTime := time.Now().Unix()
+	expTime := nowTime + expTs
+	payload := map[string]interface{}{"iat": nowTime, "exp": expTime, "purpose": api, "owner": owner}
+	jwtSingature, err := jwtEncode(payload)
 	if err != nil {
 		log.Errorf("jwt encode err:%v", err)
 		return "", err
 	}
-	return jwtSignature, nil
+	return jwtSingature, nil
+
 }
 
-// 人机验证的jwt结构
-type MachineJwt struct {
-}
-
-func (j *MachineJwt) generatorJWT(payload map[string]interface{}) (string, error) {
-	if _, ok := payload["owner"]; !ok {
-		return "", fmt.Errorf("chekparam err: no owner")
-	}
-	nowTime := time.Now().Second()
-	expTime := nowTime + 5*60
-	defPayload := map[string]interface{}{"iat": nowTime, "exp": expTime, "purpose": MachineJwtType, "owner": payload["owner"]}
-	jwtSingature, err := jwtEncode(defPayload)
+// 登录态续期
+func JwtExtension(payload map[string]interface{}, api string, expTs int64) (string, error) {
+	nowTime := time.Now().Unix()
+	expTime := nowTime + expTs
+	payload["iat"] = nowTime
+	payload["exp"] = expTime
+	jwtSingature, err := jwtEncode(payload)
 	if err != nil {
 		log.Errorf("jwt encode err:%v", err)
 		return "", err
@@ -97,13 +76,48 @@ func (j *MachineJwt) generatorJWT(payload map[string]interface{}) (string, error
 	return jwtSingature, nil
 }
 
-func GeneratorJwt(jwtType string, payload map[string]interface{}) (string, error) {
-	var jwt Jwt
-	switch jwtType {
-	case MachineJwtType:
-		jwt = &MachineJwt{}
-	default:
-		jwt = &GeneralJwt{}
+// 判断jwt签名是否合法
+func IsJwtSignatureLegal(jwt string) bool {
+	values := strings.Split(jwt, ".")
+	// jwt3段式
+	if len(values) != 3 {
+		return false
 	}
-	return jwt.generatorJWT(payload)
+	head := values[0]
+	payload := values[1]
+	signature := values[2]
+	// 检查签名头
+	if head != JwtHead {
+		return false
+	}
+	// 验证签名是否一致
+	skeyInstance := comm.GetSkeyInstance()
+	jwtSkey, err := skeyInstance.GetSkey(comm.JwtSkey)
+	if err != nil || jwtSkey == "" {
+		log.Errorf("get jwtSkey err%v", err)
+		return false
+	}
+	svrSignature := comm.Md5Encode(fmt.Sprintf("%v.%v", head, payload) + jwtSkey)
+	if svrSignature != signature {
+		log.Errorf("forged jwt! jwt:%v", jwt)
+		return false
+	}
+	return true
+}
+
+// 解码jwt
+func JwtDecodePayload(jwt string) (map[string]interface{}, error) {
+	if !IsJwtSignatureLegal(jwt) {
+		return nil, fmt.Errorf("jwt err")
+	}
+	d, err := base64.StdEncoding.DecodeString(strings.Split(jwt, ".")[1])
+	if err != nil {
+		return nil, fmt.Errorf("jwt payload decode err:%v", err)
+	}
+	var payload map[string]interface{}
+	err = json.Unmarshal(d, &payload)
+	if err != nil {
+		return nil, fmt.Errorf("json unmarshal jwt paylod fail. json:%v err:%v", string(d), err)
+	}
+	return payload, nil
 }

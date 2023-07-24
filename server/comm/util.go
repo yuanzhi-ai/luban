@@ -46,8 +46,45 @@ func IsPhoneCodeLegal(code string, needLen int) bool {
 	return err == nil
 }
 
+// 判断手机号是否合法
 func IsPhoneLegal(phone string) bool {
 	mobileExp := `^(1[3-9]d{9})$`
 	mobileReg := regexp.MustCompile(mobileExp)
 	return mobileReg.MatchString(phone)
+}
+
+const (
+	minPswdLne   = 8  // 最小密码长度
+	maxPswdLen   = 16 //最大密码长度
+	minPswdLevel = 2  //最小密码强度
+)
+
+// 判断密码是否合法
+func IsPswdLegal(pswd string) bool {
+	// 密码长度
+	if len(pswd) < minPswdLne || len(pswd) > maxPswdLen {
+		return false
+	}
+	// 过滤掉这四类字符以外的密码串,直接判断不合法
+	re, err := regexp.Compile(`^[a-zA-Z0-9.@$!%*#_~?&^]{8,16}$`)
+	if err != nil {
+		return false
+	}
+	match := re.MatchString(pswd)
+	if !match {
+		return false
+	}
+	// 密码强度
+	var level = 0
+	patternList := []string{`[0-9]+`, `[a-z]+`, `[A-Z]+`, `[.@$!%*#_~?&^]+`}
+	for _, pattern := range patternList {
+		match, _ := regexp.MatchString(pattern, pswd)
+		if match {
+			level++
+		}
+	}
+	if level < minPswdLevel {
+		return false
+	}
+	return true
 }

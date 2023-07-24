@@ -109,11 +109,25 @@ func (s *server) UserPswdLogin(ctx context.Context, req *login_proto.UserPswdLog
 // 用户手机号码登录
 func (s *server) UserPhoneLogin(ctx context.Context, req *login_proto.UserPhoneLoginReq) (
 	*login_proto.UserPhoneLoginRsp, error) {
-	return nil, nil
+	var rspErr error
+	retCode, err := verifyPhoneCode(ctx, req.PhoneNumber, req.VerCode)
+	if err != nil || retCode != comm.SuccessCode {
+		rspErr = fmt.Errorf("phone login fail. retCode:%v err:%v", retCode, err)
+		log.Errorf("%v", rspErr)
+	}
+	rsp := &login_proto.UserPhoneLoginRsp{RetCode: retCode}
+	return rsp, rspErr
 }
 
 // 重置密码
 func (s *server) ResetPswd(ctx context.Context, req *login_proto.ResetPswdReq) (
 	*login_proto.ResetPswdRsp, error) {
-	return nil, nil
+	var rspErr error
+	retCode, err := resetPswd(ctx, req.PhoneNumber, req.VerCode, req.NewPw)
+	if err != nil || retCode != comm.SuccessCode {
+		rspErr = fmt.Errorf("resetPswd fail. phone:%v retCode:%v err:%v", req.PhoneNumber, retCode, err)
+		log.Errorf("%v", rspErr)
+	}
+	rsp := &login_proto.ResetPswdRsp{RetCode: retCode}
+	return rsp, rspErr
 }

@@ -89,10 +89,22 @@ func getUserS2(ctx context.Context, phone string) (string, error) {
 func updateLoginTs(ctx context.Context, phone string) error {
 	uid := comm.Md5Encode(phone)
 	loginTs := time.Now().Unix()
-	sql := fmt.Sprintf("insert into %s.%s (f_last_login_ts) value(?) where f_uid=?", UserInfoDB, UserInfoTable)
+	sql := fmt.Sprintf("update %s.%s set f_last_login_ts=? where f_uid=?", UserInfoDB, UserInfoTable)
 	rowAffect, err := cl.Exec(sql, loginTs, uid)
 	if err != nil || rowAffect != 1 {
 		return fmt.Errorf("insert login ts fail. uid:%v err:%v", uid, err)
+	}
+	return nil
+}
+
+// 更新密码
+func updatePswd(ctx context.Context, phone string, newPswd string) error {
+	uid := comm.Md5Encode(phone)
+	dbS2 := comm.CalculateS2(phone, newPswd)
+	sql := fmt.Sprintf("update %s.%s set f_s2=? where f_uid=?", UserInfoDB, UserInfoTable)
+	rowAffect, err := cl.Exec(sql, dbS2, uid)
+	if err != nil || rowAffect != 1 {
+		return fmt.Errorf("update user pswd fail. uid:%v err:%v", uid, err)
 	}
 	return nil
 }

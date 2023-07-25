@@ -1,0 +1,33 @@
+后台发布流程配置检查
+1. 检查日志路径是否配置正确
+2. 检查秘钥配置是否正确 包括验证码、jwt签名秘钥、手机号加密秘钥
+3. 检查环境变量是否配置正确:
+  MySQL
+  a. WANXIANG_DB_USER
+  b. WANXIANG_DB_PSWD
+  c. WANXIANG_DB_IP
+  d. WANXIANG_DB_PORT
+  Redis
+  a. WANXIANG_REDIS_ADDR
+  b. WANXIANG_REDIS_PSWD
+
+http_proxy 发布流程
+1. 停止旧版的docker CONTAINER
+2. 删掉旧版的 CONTAINER 和 images
+3. git pull 最新版的Luban代码
+4. 运行指令打docker镜像: docker build -f ProxyDockerfile -t http-proxy:latest .
+5. 启动实例: docker run -dit -p 127.0.0.1:8080:8080/tcp -d -v /usr/wanxiang/http_proxy/app_data:/app/app_data http-proxy:latest
+
+login_svr 发布流程
+1. 停止旧版的docker CONTAINER
+2. 删掉旧版的 CONTAINER 和 images
+3. git pull 最新版的Luban代码
+4. 运行指令打docker镜像: docker build -f LoginDockerfile -t login_svr:latest .
+5. 启动实例: docker run -dit -p 0.0.0.0:6657:6657/tcp -d -v /usr/wanxiang/login_svr/app_data:/app/app_data login_svr:latest
+
+verify_svr 发布流程
+1. 停止旧版的docker CONTAINER
+2. 删掉旧版的 CONTAINER 和 images
+3. git pull 最新版的Luban代码
+4. 运行指令打docker镜像: docker build -f VerifyDockerfile -t verify_svr:latest .
+5. 启动实例: docker run -dit -p 0.0.0.0:3360:3360/tcp -d -v /usr/wanxiang/verify_svr/app_data:/app/app_data verify_svr:latest

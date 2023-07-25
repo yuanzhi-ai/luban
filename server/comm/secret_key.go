@@ -19,9 +19,6 @@ const (
 	// CaptchaSkey 验证码秘钥存枚举
 	CaptchaSkey     = "captcha"
 	captchaSkeyPath = "/app/app_data/skey/captchaSkey.txt"
-	// 登录注册的秘钥枚举
-	LoginRegisterSkey     = "login"
-	LoginRegisterSkeyPath = "/app/app_data/skey/loginSkey.txt"
 	// jwt签名秘钥
 	JwtSkey     = "jwt"
 	JwtSkeyPath = "/app/app_data/skey/jwtSkey.txt"
@@ -62,7 +59,7 @@ func (s *skey) GetSkey(skeyMod string) (string, error) {
 
 func (s *skey) init() {
 	// 这里初始化所有的秘钥到文件里
-	s.skeyFilePaths = map[string]string{CaptchaSkey: captchaSkeyPath, LoginRegisterSkey: LoginRegisterSkeyPath}
+	s.skeyFilePaths = map[string]string{CaptchaSkey: captchaSkeyPath, JwtSkey: JwtSkeyPath, PhoneSkey: PhoneSkeyPath}
 	s.reloadAllSkey()
 	// 每5分钟重新load一次秘钥
 	c := cron.New()
@@ -78,7 +75,7 @@ func (s *skey) init() {
 func reloadSkey() {
 	skeyLock.Lock()
 	defer skeyLock.Unlock()
-	instance := &skey{skeyFilePaths: map[string]string{CaptchaSkey: captchaSkeyPath, LoginRegisterSkey: LoginRegisterSkeyPath}}
+	instance := &skey{skeyFilePaths: map[string]string{CaptchaSkey: captchaSkeyPath, JwtSkey: JwtSkeyPath, PhoneSkey: PhoneSkeyPath}}
 	instance.reloadAllSkey()
 }
 

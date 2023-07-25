@@ -1,7 +1,8 @@
 后台发布流程配置检查
-1. 检查日志路径是否配置正确
-2. 检查秘钥配置是否正确 包括验证码、jwt签名秘钥、手机号加密秘钥
-3. 检查环境变量是否配置正确:
+1. 检查日志路径是否配置正确 /usr/wanxiang/[svr_name]/app_data/log
+2. 检查秘钥配置是否正确 包括验证码、jwt签名秘钥、手机号加密秘钥 /usr/wanxiang/[svr_name]/app_data/skey
+3. 检查验证码字体是否上传
+4. 检查环境变量是否配置正确:
   MySQL
   a. WANXIANG_DB_USER
   b. WANXIANG_DB_PSWD

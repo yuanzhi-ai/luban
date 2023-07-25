@@ -24,6 +24,7 @@ type Client struct {
 // NewClient 新建client
 func NewClient(userName string, passwd string, ip string, port string, database string) (*Client, error) {
 	path := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", userName, passwd, ip, port, database)
+	fmt.Printf("mysql path:%v", path)
 	db, err := sql.Open("mysql", path)
 	if err != nil {
 		log.Errorf("sql.Open err: %+v", err)

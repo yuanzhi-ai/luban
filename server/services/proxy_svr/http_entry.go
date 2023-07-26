@@ -48,7 +48,10 @@ func getMachineVerifyHandler(w http.ResponseWriter, r *http.Request) {
 	log.Debugf("into getMachineVerifyHandler")
 	req := &login_proto.GetMachineVerifyReq{}
 	rsp := &login_proto.GetMachineVerifyRsp{RetCode: comm.GeneratorCaptchaErr}
-	defer func() { transer.DoRsp(w, rsp) }()
+	defer func() {
+		log.Debugf("req:%+v rsp:%+v", req, rsp)
+		transer.DoRsp(w, rsp)
+	}()
 
 	err := transer.GetReq(r, req)
 	if err != nil {
@@ -65,11 +68,11 @@ func getMachineVerifyHandler(w http.ResponseWriter, r *http.Request) {
 	defer grpcConn.Close()
 	defer cancel()
 	rsp, err = client.GetMachineVerify(ctx, req)
-	if err != nil {
+	if err != nil || rsp.RetCode != comm.SuccessCode {
 		log.Errorf("RPC GetMachineVerify fial err:%v", err)
 	}
 	rsp.RetCode = comm.SuccessCode
-	log.Debugf("req:%+v rsp:%+v", req, rsp)
+
 }
 
 // sendMachineVerifyResultHandler 人机验证码回包
@@ -77,7 +80,10 @@ func sendMachineVerifyResultHandler(w http.ResponseWriter, r *http.Request) {
 	log.Debugf("into sendMachineVerifyResultHandler")
 	req := &login_proto.SendMachineVerifyResultReq{}
 	rsp := &login_proto.SendMachineVerifyResultRsp{RetCode: comm.VerifyCodeErr}
-	defer func() { transer.DoRsp(w, rsp) }()
+	defer func() {
+		log.Debugf("req:%+v rsp:%+v", req, rsp)
+		transer.DoRsp(w, rsp)
+	}()
 
 	err := transer.GetReq(r, req)
 	if err != nil {
@@ -94,11 +100,11 @@ func sendMachineVerifyResultHandler(w http.ResponseWriter, r *http.Request) {
 	defer grpcConn.Close()
 	defer cancel()
 	rsp, err = client.SendMachineVerifyResult(ctx, req)
-	if err != nil {
+	if err != nil || rsp.RetCode != comm.SuccessCode {
 		log.Errorf("RPC SendMachineVerifyResult err:%v", err)
 		return
 	}
-	log.Debugf("req:%+v rsp:%+v", req, rsp)
+
 	// 验证成功的带上jwt做游客态签名
 	jwt, err := auth.GeneratorJWT(req.CodeId, auth.PRCGetMachineVerify, auth.TouristJwtExpTs)
 	if err != nil {
@@ -114,7 +120,10 @@ func sendTextVerCode(w http.ResponseWriter, r *http.Request) {
 	log.Debugf("into sendTextVerCode")
 	req := &login_proto.SendTextVerCodeReq{}
 	rsp := &login_proto.SendTextVerCodeRsp{RetCode: comm.SendSmsVerCodeErr}
-	defer func() { transer.DoRsp(w, rsp) }()
+	defer func() {
+		log.Debugf("req:%+v rsp:%+v", req, rsp)
+		transer.DoRsp(w, rsp)
+	}()
 	// 先做jwt的校验
 	jwt := r.Header.Get("Token")
 	payload, err := auth.JwtDecodePayload(jwt)
@@ -152,11 +161,10 @@ func sendTextVerCode(w http.ResponseWriter, r *http.Request) {
 	defer grpcConn.Close()
 	defer cancel()
 	rsp, err = client.SendTextVerCode(ctx, req)
-	if err != nil {
+	if err != nil || rsp.RetCode != comm.SuccessCode {
 		log.Errorf("RPC SendTextVerCode err:%v", err)
 		return
 	}
-	log.Debugf("req:%+v rsp:%+v", req, rsp)
 	// 成功后下发短信验证成功的jwt
 	jwt, err = auth.GeneratorJWT(req.PhoneNumber, auth.RPCSendTextVerCode, auth.TouristJwtExpTs)
 	if err != nil || jwt == "" {
@@ -171,7 +179,10 @@ func userPswdLogin(w http.ResponseWriter, r *http.Request) {
 	log.Debugf("into userPswdLogin")
 	req := &login_proto.UserPswdLoginReq{}
 	rsp := &login_proto.UserPswdLoginRsp{RetCode: comm.LoginErr}
-	defer func() { transer.DoRsp(w, rsp) }()
+	defer func() {
+		log.Debugf("req:%+v rsp:%+v", req, rsp)
+		transer.DoRsp(w, rsp)
+	}()
 	// 先做jwt的校验
 	jwt := r.Header.Get("Token")
 	payload, err := auth.JwtDecodePayload(jwt)
@@ -208,11 +219,10 @@ func userPswdLogin(w http.ResponseWriter, r *http.Request) {
 	defer grpcConn.Close()
 	defer cancel()
 	rsp, err = client.UserPswdLogin(ctx, req)
-	if err != nil {
+	if err != nil || rsp.RetCode != comm.SuccessCode {
 		log.Errorf("RPC UserPswdLogin err:%v", err)
 		return
 	}
-	log.Debugf("req:%+v rsp:%+v", req, rsp)
 	// 成功后下发登录的jwt
 	jwt, err = auth.GeneratorJWT(req.PhoneNumber, auth.JwtLoginPurpose, auth.HomePageJwtExpTs)
 	if err != nil || jwt == "" {
@@ -227,7 +237,10 @@ func userPhoneLogin(w http.ResponseWriter, r *http.Request) {
 	log.Debugf("into userPhoneLogin")
 	req := &login_proto.UserPhoneLoginReq{}
 	rsp := &login_proto.UserPhoneLoginRsp{RetCode: comm.LoginErr}
-	defer func() { transer.DoRsp(w, rsp) }()
+	defer func() {
+		log.Debugf("req:%+v rsp:%+v", req, rsp)
+		transer.DoRsp(w, rsp)
+	}()
 	// 先做jwt的校验
 	jwt := r.Header.Get("Token")
 	payload, err := auth.JwtDecodePayload(jwt)
@@ -264,11 +277,10 @@ func userPhoneLogin(w http.ResponseWriter, r *http.Request) {
 	defer grpcConn.Close()
 	defer cancel()
 	rsp, err = client.UserPhoneLogin(ctx, req)
-	if err != nil {
+	if err != nil || rsp.RetCode != comm.SuccessCode {
 		log.Errorf("RPC UserPswdLogin err:%v", err)
 		return
 	}
-	log.Debugf("req:%+v rsp:%+v", req, rsp)
 	// 成功后下发登录的jwt
 	jwt, err = auth.GeneratorJWT(req.PhoneNumber, auth.JwtLoginPurpose, auth.HomePageJwtExpTs)
 	if err != nil || jwt == "" {
@@ -283,7 +295,10 @@ func userRegister(w http.ResponseWriter, r *http.Request) {
 	log.Debugf("into userRegister")
 	req := &login_proto.UserRegisterReq{}
 	rsp := &login_proto.UserRegisterRsp{RetCode: comm.RegisterErr}
-	defer func() { transer.DoRsp(w, rsp) }()
+	defer func() {
+		log.Debugf("req:%+v rsp:%+v", req, rsp)
+		transer.DoRsp(w, rsp)
+	}()
 	// 先做jwt的校验
 	jwt := r.Header.Get("Token")
 	payload, err := auth.JwtDecodePayload(jwt)
@@ -320,11 +335,10 @@ func userRegister(w http.ResponseWriter, r *http.Request) {
 	defer grpcConn.Close()
 	defer cancel()
 	rsp, err = client.UserRegister(ctx, req)
-	if err != nil {
+	if err != nil || rsp.RetCode != comm.SuccessCode {
 		log.Errorf("RPC UserPswdLogin err:%v", err)
 		return
 	}
-	log.Debugf("req:%+v rsp:%+v", req, rsp)
 	// 成功后下发登录的jwt
 	jwt, err = auth.GeneratorJWT(req.PhoneNumber, auth.JwtLoginPurpose, auth.HomePageJwtExpTs)
 	if err != nil || jwt == "" {
@@ -339,7 +353,10 @@ func resetPswd(w http.ResponseWriter, r *http.Request) {
 	log.Debugf("into resetPswd")
 	req := &login_proto.ResetPswdReq{}
 	rsp := &login_proto.ResetPswdRsp{RetCode: comm.LoginErr}
-	defer func() { transer.DoRsp(w, rsp) }()
+	defer func() {
+		log.Debugf("req:%+v rsp:%+v", req, rsp)
+		transer.DoRsp(w, rsp)
+	}()
 	// 先做jwt的校验
 	jwt := r.Header.Get("Token")
 	payload, err := auth.JwtDecodePayload(jwt)
@@ -376,11 +393,10 @@ func resetPswd(w http.ResponseWriter, r *http.Request) {
 	defer grpcConn.Close()
 	defer cancel()
 	rsp, err = client.ResetPswd(ctx, req)
-	if err != nil {
+	if err != nil || rsp.RetCode != comm.SuccessCode {
 		log.Errorf("RPC ResetPswd err:%v", err)
 		return
 	}
-	log.Debugf("req:%+v rsp:%+v", req, rsp)
 	// 这里成功后跳主页，重走人机验证，不下发jwt
 	rsp.RetCode = comm.SuccessCode
 }

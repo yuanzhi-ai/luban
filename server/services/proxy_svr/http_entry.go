@@ -48,7 +48,7 @@ func getMachineVerifyHandler(w http.ResponseWriter, r *http.Request) {
 	log.Debugf("into getMachineVerifyHandler")
 	req := &login_proto.GetMachineVerifyReq{}
 	rsp := &login_proto.GetMachineVerifyRsp{RetCode: comm.GeneratorCaptchaErr}
-	defer transer.DoRsp(w, rsp)
+	defer func() { transer.DoRsp(w, rsp) }()
 
 	err := transer.GetReq(r, req)
 	if err != nil {
@@ -77,7 +77,7 @@ func sendMachineVerifyResultHandler(w http.ResponseWriter, r *http.Request) {
 	log.Debugf("into sendMachineVerifyResultHandler")
 	req := &login_proto.SendMachineVerifyResultReq{}
 	rsp := &login_proto.SendMachineVerifyResultRsp{RetCode: comm.VerifyCodeErr}
-	defer transer.DoRsp(w, rsp)
+	defer func() { transer.DoRsp(w, rsp) }()
 
 	err := transer.GetReq(r, req)
 	if err != nil {
@@ -105,6 +105,7 @@ func sendMachineVerifyResultHandler(w http.ResponseWriter, r *http.Request) {
 		log.Errorf("GeneratorJwt err:%v", err)
 		return
 	}
+	rsp.RetCode = comm.SuccessCode
 	w.Header().Set("Token", jwt)
 }
 
@@ -113,7 +114,7 @@ func sendTextVerCode(w http.ResponseWriter, r *http.Request) {
 	log.Debugf("into sendTextVerCode")
 	req := &login_proto.SendTextVerCodeReq{}
 	rsp := &login_proto.SendTextVerCodeRsp{RetCode: comm.SendSmsVerCodeErr}
-	defer transer.DoRsp(w, rsp)
+	defer func() { transer.DoRsp(w, rsp) }()
 	// 先做jwt的校验
 	jwt := r.Header.Get("Token")
 	payload, err := auth.JwtDecodePayload(jwt)
@@ -170,7 +171,7 @@ func userPswdLogin(w http.ResponseWriter, r *http.Request) {
 	log.Debugf("into userPswdLogin")
 	req := &login_proto.UserPswdLoginReq{}
 	rsp := &login_proto.UserPswdLoginRsp{RetCode: comm.LoginErr}
-	defer transer.DoRsp(w, rsp)
+	defer func() { transer.DoRsp(w, rsp) }()
 	// 先做jwt的校验
 	jwt := r.Header.Get("Token")
 	payload, err := auth.JwtDecodePayload(jwt)
@@ -226,7 +227,7 @@ func userPhoneLogin(w http.ResponseWriter, r *http.Request) {
 	log.Debugf("into userPhoneLogin")
 	req := &login_proto.UserPhoneLoginReq{}
 	rsp := &login_proto.UserPhoneLoginRsp{RetCode: comm.LoginErr}
-	defer transer.DoRsp(w, rsp)
+	defer func() { transer.DoRsp(w, rsp) }()
 	// 先做jwt的校验
 	jwt := r.Header.Get("Token")
 	payload, err := auth.JwtDecodePayload(jwt)
@@ -282,7 +283,7 @@ func userRegister(w http.ResponseWriter, r *http.Request) {
 	log.Debugf("into userRegister")
 	req := &login_proto.UserRegisterReq{}
 	rsp := &login_proto.UserRegisterRsp{RetCode: comm.RegisterErr}
-	defer transer.DoRsp(w, rsp)
+	defer func() { transer.DoRsp(w, rsp) }()
 	// 先做jwt的校验
 	jwt := r.Header.Get("Token")
 	payload, err := auth.JwtDecodePayload(jwt)
@@ -338,7 +339,7 @@ func resetPswd(w http.ResponseWriter, r *http.Request) {
 	log.Debugf("into resetPswd")
 	req := &login_proto.ResetPswdReq{}
 	rsp := &login_proto.ResetPswdRsp{RetCode: comm.LoginErr}
-	defer transer.DoRsp(w, rsp)
+	defer func() { transer.DoRsp(w, rsp) }()
 	// 先做jwt的校验
 	jwt := r.Header.Get("Token")
 	payload, err := auth.JwtDecodePayload(jwt)

@@ -20,7 +20,7 @@ func GetReq(r *http.Request, req proto.Message) error {
 		log.Errorf("read body err: %+v", err)
 		return fmt.Errorf("read body err: %+v", err)
 	}
-
+	log.Debugf("req的bytes数组 body.Bytes():%+v", body.Bytes())
 	err = proto.Unmarshal(body.Bytes(), req)
 	if err != nil {
 		log.Errorf("proto.Unmarshal err: %+v", err)

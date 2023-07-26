@@ -68,6 +68,7 @@ func getMachineVerifyHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Errorf("RPC GetMachineVerify fial err:%v", err)
 	}
+	rsp.RetCode = comm.SuccessCode
 	log.Debugf("req:%+v rsp:%+v", req, rsp)
 }
 

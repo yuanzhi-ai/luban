@@ -3,8 +3,8 @@
 package comm
 
 const (
-	/*通用错误码*/
-	SuccessCode  int32 = 0
+	/*通用状态码*/
+	SuccessCode  int32 = 666  // 成功
 	InputErr     int32 = 1007 // 入参数错误
 	NetWorkErr   int32 = 1008 // 网路错误
 	RedisErr     int32 = 1009 // redis 失败

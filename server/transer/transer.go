@@ -38,7 +38,7 @@ func DoRsp(w http.ResponseWriter, rsp proto.Message) {
 	}
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE")
-	w.Header().Set("Access-Control-Allow-Headers", "content-type")
+	w.Header().Set("Access-Control-Allow-Headers", "content-type, Token")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Access-Control-Expose-Headers", "Access-Control-Allow-Headers, Token")
 	_, err = w.Write(r)

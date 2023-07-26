@@ -125,7 +125,7 @@ func sendTextVerCode(w http.ResponseWriter, r *http.Request) {
 		transer.DoRsp(w, rsp)
 	}()
 	// 先做jwt的校验
-	jwt := r.Header.Get("Token")
+	jwt := r.Header.Get("token")
 	payload, err := auth.JwtDecodePayload(jwt)
 	if err != nil || payload == nil || len(payload) == 0 {
 		log.Errorf("jwt decode payload jwt:%v err:%v", jwt, err)
@@ -184,7 +184,7 @@ func userPswdLogin(w http.ResponseWriter, r *http.Request) {
 		transer.DoRsp(w, rsp)
 	}()
 	// 先做jwt的校验
-	jwt := r.Header.Get("Token")
+	jwt := r.Header.Get("token")
 	payload, err := auth.JwtDecodePayload(jwt)
 	if err != nil || payload == nil || len(payload) == 0 {
 		log.Errorf("jwt decode payload jwt:%v err:%v", jwt, err)
@@ -242,7 +242,7 @@ func userPhoneLogin(w http.ResponseWriter, r *http.Request) {
 		transer.DoRsp(w, rsp)
 	}()
 	// 先做jwt的校验
-	jwt := r.Header.Get("Token")
+	jwt := r.Header.Get("token")
 	payload, err := auth.JwtDecodePayload(jwt)
 	if err != nil || payload == nil || len(payload) == 0 {
 		log.Errorf("jwt decode payload jwt:%v err:%v", jwt, err)
@@ -300,7 +300,7 @@ func userRegister(w http.ResponseWriter, r *http.Request) {
 		transer.DoRsp(w, rsp)
 	}()
 	// 先做jwt的校验
-	jwt := r.Header.Get("Token")
+	jwt := r.Header.Get("token")
 	payload, err := auth.JwtDecodePayload(jwt)
 	if err != nil || payload == nil || len(payload) == 0 {
 		log.Errorf("jwt decode payload jwt:%v err:%v", jwt, err)
@@ -358,7 +358,7 @@ func resetPswd(w http.ResponseWriter, r *http.Request) {
 		transer.DoRsp(w, rsp)
 	}()
 	// 先做jwt的校验
-	jwt := r.Header.Get("Token")
+	jwt := r.Header.Get("token")
 	payload, err := auth.JwtDecodePayload(jwt)
 	if err != nil || payload == nil || len(payload) == 0 {
 		log.Errorf("jwt decode payload jwt:%v err:%v", jwt, err)

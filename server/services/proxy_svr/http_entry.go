@@ -112,7 +112,7 @@ func sendMachineVerifyResultHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rsp.RetCode = comm.SuccessCode
-	w.Header().Set("Token", jwt)
+	w.Header().Set("token", jwt)
 }
 
 // 发送短信验证码

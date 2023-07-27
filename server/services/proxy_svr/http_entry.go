@@ -125,6 +125,7 @@ func sendTextVerCode(w http.ResponseWriter, r *http.Request) {
 		transer.DoRsp(w, rsp)
 	}()
 	// 先做jwt的校验
+	log.Debugf("request header:%+v", r.Header)
 	jwt := r.Header.Get("token")
 	payload, err := auth.JwtDecodePayload(jwt)
 	if err != nil || payload == nil || len(payload) == 0 {

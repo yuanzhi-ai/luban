@@ -52,7 +52,10 @@ func getMachineVerifyHandler(w http.ResponseWriter, r *http.Request) {
 		log.Debugf("req:%+v rsp:%+v", req, rsp)
 		transer.DoRsp(w, rsp)
 	}()
-
+	if r.Method == "OPTIONS" {
+		rsp.RetCode = comm.SuccessCode
+		return
+	}
 	err := transer.GetReq(r, req)
 	if err != nil {
 		log.Errorf("trans GetMachineVerifyReq req err:%v", err)
@@ -84,6 +87,10 @@ func sendMachineVerifyResultHandler(w http.ResponseWriter, r *http.Request) {
 		log.Debugf("req:%+v rsp:%+v", req, rsp)
 		transer.DoRsp(w, rsp)
 	}()
+	if r.Method == "OPTIONS" {
+		rsp.RetCode = comm.SuccessCode
+		return
+	}
 
 	err := transer.GetReq(r, req)
 	if err != nil {
@@ -124,9 +131,14 @@ func sendTextVerCode(w http.ResponseWriter, r *http.Request) {
 		log.Debugf("req:%+v rsp:%+v", req, rsp)
 		transer.DoRsp(w, rsp)
 	}()
+	if r.Method == "OPTIONS" {
+		rsp.RetCode = comm.SuccessCode
+		return
+	}
 	// 先做jwt的校验
 	log.Debugf("request header:%+v", r.Header)
 	jwt := r.Header.Get("Token")
+	log.Debugf("r.Header.Get Token:%v", jwt)
 	payload, err := auth.JwtDecodePayload(jwt)
 	if err != nil || payload == nil || len(payload) == 0 {
 		log.Errorf("jwt decode payload jwt:%v err:%v", jwt, err)
@@ -184,6 +196,10 @@ func userPswdLogin(w http.ResponseWriter, r *http.Request) {
 		log.Debugf("req:%+v rsp:%+v", req, rsp)
 		transer.DoRsp(w, rsp)
 	}()
+	if r.Method == "OPTIONS" {
+		rsp.RetCode = comm.SuccessCode
+		return
+	}
 	// 先做jwt的校验
 	jwt := r.Header.Get("Token")
 	payload, err := auth.JwtDecodePayload(jwt)
@@ -242,6 +258,10 @@ func userPhoneLogin(w http.ResponseWriter, r *http.Request) {
 		log.Debugf("req:%+v rsp:%+v", req, rsp)
 		transer.DoRsp(w, rsp)
 	}()
+	if r.Method == "OPTIONS" {
+		rsp.RetCode = comm.SuccessCode
+		return
+	}
 	// 先做jwt的校验
 	jwt := r.Header.Get("Token")
 	payload, err := auth.JwtDecodePayload(jwt)
@@ -300,6 +320,10 @@ func userRegister(w http.ResponseWriter, r *http.Request) {
 		log.Debugf("req:%+v rsp:%+v", req, rsp)
 		transer.DoRsp(w, rsp)
 	}()
+	if r.Method == "OPTIONS" {
+		rsp.RetCode = comm.SuccessCode
+		return
+	}
 	// 先做jwt的校验
 	jwt := r.Header.Get("Token")
 	payload, err := auth.JwtDecodePayload(jwt)
@@ -358,6 +382,10 @@ func resetPswd(w http.ResponseWriter, r *http.Request) {
 		log.Debugf("req:%+v rsp:%+v", req, rsp)
 		transer.DoRsp(w, rsp)
 	}()
+	if r.Method == "OPTIONS" {
+		rsp.RetCode = comm.SuccessCode
+		return
+	}
 	// 先做jwt的校验
 	jwt := r.Header.Get("Token")
 	payload, err := auth.JwtDecodePayload(jwt)

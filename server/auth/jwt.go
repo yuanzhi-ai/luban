@@ -51,8 +51,8 @@ func jwtEncode(payload map[string]interface{}) (string, error) {
 
 func GeneratorJWT(owner string, api string, expTs int64) (string, error) {
 	nowTime := time.Now().Unix()
-	expTime := nowTime + expTs
-	payload := map[string]interface{}{"iat": nowTime, "exp": expTime, "purpose": api, "owner": owner}
+	expTime := fmt.Sprintf("%v", (nowTime + expTs))
+	payload := map[string]interface{}{"iat": fmt.Sprintf("%v", nowTime), "exp": expTime, "purpose": api, "owner": owner}
 	jwtSingature, err := jwtEncode(payload)
 	if err != nil {
 		log.Errorf("jwt encode err:%v", err)

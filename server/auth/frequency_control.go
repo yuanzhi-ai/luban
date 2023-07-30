@@ -19,7 +19,7 @@ func (f *frequencyControl) canQuery(id string) bool {
 	defer f.locker.Unlock()
 	lastTs, ok := f.counter[id]
 	now := time.Now().Unix()
-	if !ok || lastTs-now > f.tsGap {
+	if !ok || now-lastTs > f.tsGap {
 		f.counter[id] = now
 		return true
 	}

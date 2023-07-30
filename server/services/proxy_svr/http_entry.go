@@ -363,7 +363,7 @@ func userRegister(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 	rsp, err = client.UserRegister(ctx, req)
 	if err != nil || rsp.RetCode != comm.SuccessCode {
-		log.Errorf("RPC UserPswdLogin err:%v", err)
+		log.Errorf("RPC UserPswdLogin err:%v rsp.RetCode:%v", err, rsp.RetCode)
 		return
 	}
 	// 成功后下发登录的jwt

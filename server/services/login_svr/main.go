@@ -78,7 +78,7 @@ func (s *server) SendTextVerCode(ctx context.Context, req *login_proto.SendTextV
 // 用户注册
 func (s *server) UserRegister(ctx context.Context, req *login_proto.UserRegisterReq) (
 	*login_proto.UserRegisterRsp, error) {
-	retCode, err := register(ctx, req.PhoneNumber, req.Passwd, req.VerCode)
+	retCode, err := register(ctx, req.PhoneNumber, req.VerCode, req.Passwd)
 	if err != nil || retCode != comm.SuccessCode {
 		log.Errorf("register fail.retCode:%v err:%v req:%v", retCode, err, req)
 	}

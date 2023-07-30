@@ -18,7 +18,7 @@ func IsPayloadLegal(payload map[string]interface{}, api string) error {
 		return fmt.Errorf("conv exp to ts fail. exp:%v", exp)
 	}
 	now := time.Now().Unix()
-	if expTs > now {
+	if expTs < now {
 		return fmt.Errorf("jwt expiration now:%v exp:%v", now, expTs)
 	}
 	// 检查purpose 是否正确

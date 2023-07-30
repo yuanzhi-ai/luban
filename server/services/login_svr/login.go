@@ -68,6 +68,7 @@ func sendTextVerCode(ctx context.Context, phone string) (int32, error) {
 		return comm.InputErr, fmt.Errorf("input phone:%v legal", phone)
 	}
 	code := comm.GetRandDigitStr(codeLen)
+	log.Debugf("***********短信验证码为:%v********", code)
 	err := sms.SendMsg(code, phone)
 	if err != nil {
 		log.Errorf("send vercode fial phone:%v code:%v err:%v", phone, code, err)

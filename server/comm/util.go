@@ -48,7 +48,7 @@ func IsPhoneCodeLegal(code string, needLen int) bool {
 
 // 判断手机号是否合法
 func IsPhoneLegal(phone string) bool {
-	mobileExp := `^(1[3-9]d{9})$`
+	mobileExp := `^1\d{10}$`
 	mobileReg := regexp.MustCompile(mobileExp)
 	return mobileReg.MatchString(phone)
 }

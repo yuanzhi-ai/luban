@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"net"
 
 	"github.com/yuanzhi-ai/luban/go_proto/login_proto"
@@ -44,7 +43,7 @@ func (s *server) GetMachineVerify(ctx context.Context, req *login_proto.GetMachi
 	capId, img, retCode, err := getMachineVerify(ctx)
 	if err != nil || retCode != comm.SuccessCode {
 		log.Errorf("get machine verify retCode:%v err:%v", retCode, err)
-		return rsp, err
+		return rsp, nil
 	}
 	rsp.CodeId = capId
 	rsp.Base64Img = img
@@ -55,13 +54,11 @@ func (s *server) GetMachineVerify(ctx context.Context, req *login_proto.GetMachi
 // 发送验证码结果
 func (s *server) SendMachineVerifyResult(ctx context.Context, req *login_proto.SendMachineVerifyResultReq) (
 	*login_proto.SendMachineVerifyResultRsp, error) {
-	var rspErr error
 	rsp := &login_proto.SendMachineVerifyResultRsp{RetCode: comm.VerifyCodeErr}
 	retCode, err := sendMachineVerifyResult(ctx, req.CodeId, req.Ans)
 	if err != nil {
-		rspErr = fmt.Errorf("verify code err:%v", err)
-		log.Errorf("%v", rspErr)
-		return rsp, rspErr
+		log.Errorf("verify code err:%v", err)
+		return rsp, nil
 	}
 	rsp.RetCode = retCode
 	return rsp, nil
@@ -70,64 +67,54 @@ func (s *server) SendMachineVerifyResult(ctx context.Context, req *login_proto.S
 // 发送一个短信验证码
 func (s *server) SendTextVerCode(ctx context.Context, req *login_proto.SendTextVerCodeReq) (
 	*login_proto.SendTextVerCodeRsp, error) {
-	var rspErr error
 	retCode, err := sendTextVerCode(ctx, req.PhoneNumber)
 	if err != nil || retCode != comm.SuccessCode {
-		rspErr = fmt.Errorf("send text vercode fail. retCode:%v err:%v", retCode, err)
-		log.Errorf("%v", rspErr)
+		log.Errorf("send text vercode fail. retCode:%v err:%v", retCode, err)
 	}
 	rsp := &login_proto.SendTextVerCodeRsp{RetCode: retCode}
-	return rsp, rspErr
+	return rsp, nil
 }
 
 // 用户注册
 func (s *server) UserRegister(ctx context.Context, req *login_proto.UserRegisterReq) (
 	*login_proto.UserRegisterRsp, error) {
-	var rspErr error
 	retCode, err := register(ctx, req.PhoneNumber, req.Passwd, req.VerCode)
 	if err != nil || retCode != comm.SuccessCode {
-		rspErr = fmt.Errorf("register fail.retCode:%v err:%v req:%v", retCode, err, req)
-		log.Errorf("%v", rspErr)
+		log.Errorf("register fail.retCode:%v err:%v req:%v", retCode, err, req)
 	}
 	rsp := &login_proto.UserRegisterRsp{RetCode: retCode}
-	return rsp, rspErr
+	return rsp, nil
 }
 
 // 用户密码登录
 func (s *server) UserPswdLogin(ctx context.Context, req *login_proto.UserPswdLoginReq) (
 	*login_proto.UserPswdLoginRsp, error) {
-	var rspErr error
 	retCode, err := passwordLogin(ctx, req.PhoneNumber, req.A1)
 	if err != nil || retCode != comm.SuccessCode {
-		rspErr = fmt.Errorf("password login fail. retCode:%v err:%v", retCode, err)
-		log.Errorf("%v", rspErr)
+		log.Errorf("password login fail. retCode:%v err:%v", retCode, err)
 	}
 	rsp := &login_proto.UserPswdLoginRsp{RetCode: retCode}
-	return rsp, rspErr
+	return rsp, nil
 }
 
 // 用户手机号码登录
 func (s *server) UserPhoneLogin(ctx context.Context, req *login_proto.UserPhoneLoginReq) (
 	*login_proto.UserPhoneLoginRsp, error) {
-	var rspErr error
 	retCode, err := verifyPhoneCode(ctx, req.PhoneNumber, req.VerCode)
 	if err != nil || retCode != comm.SuccessCode {
-		rspErr = fmt.Errorf("phone login fail. retCode:%v err:%v", retCode, err)
-		log.Errorf("%v", rspErr)
+		log.Errorf("phone login fail. retCode:%v err:%v", retCode, err)
 	}
 	rsp := &login_proto.UserPhoneLoginRsp{RetCode: retCode}
-	return rsp, rspErr
+	return rsp, nil
 }
 
 // 重置密码
 func (s *server) ResetPswd(ctx context.Context, req *login_proto.ResetPswdReq) (
 	*login_proto.ResetPswdRsp, error) {
-	var rspErr error
 	retCode, err := resetPswd(ctx, req.PhoneNumber, req.VerCode, req.NewPw)
 	if err != nil || retCode != comm.SuccessCode {
-		rspErr = fmt.Errorf("resetPswd fail. phone:%v retCode:%v err:%v", req.PhoneNumber, retCode, err)
-		log.Errorf("%v", rspErr)
+		log.Errorf("resetPswd fail. phone:%v retCode:%v err:%v", req.PhoneNumber, retCode, err)
 	}
 	rsp := &login_proto.ResetPswdRsp{RetCode: retCode}
-	return rsp, rspErr
+	return rsp, nil
 }

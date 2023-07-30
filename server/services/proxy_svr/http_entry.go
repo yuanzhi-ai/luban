@@ -179,7 +179,7 @@ func sendTextVerCode(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 	log.Debugf("pass NewLoginClient")
 	rsp, err = client.SendTextVerCode(ctx, req)
-	if err != nil || rsp.RetCode != comm.SuccessCode {
+	if err != nil || rsp == nil || rsp.RetCode != comm.SuccessCode {
 		log.Errorf("RPC SendTextVerCode err:%v", err)
 		return
 	}

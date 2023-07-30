@@ -136,7 +136,6 @@ func sendTextVerCode(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// 先做jwt的校验
-	log.Debugf("request header:%+v", r.Header)
 	jwt := r.Header.Get("Token")
 	log.Debugf("r.Header.Get Token:%v", jwt)
 	payload, err := auth.JwtDecodePayload(jwt)
@@ -145,7 +144,6 @@ func sendTextVerCode(w http.ResponseWriter, r *http.Request) {
 		rsp.RetCode = comm.JWTErr
 		return
 	}
-	log.Debugf("pass JwtDecodePayload")
 	// 检查payload是否合法
 	err = IsPayloadLegal(payload, auth.PRCGetMachineVerify)
 	if err != nil {
@@ -153,20 +151,17 @@ func sendTextVerCode(w http.ResponseWriter, r *http.Request) {
 		rsp.RetCode = comm.JWTErr
 		return
 	}
-	log.Debugf("pass IsPayloadLegal")
 	// 检查用户访问限频
 	if !auth.FrequencyControler.CanVisit(req.PhoneNumber, auth.RPCSendTextVerCode) {
 		rsp.RetCode = comm.FrequencyErr
 		return
 	}
-	log.Debugf("pass CanVisit")
 	// rpc请求
 	err = transer.GetReq(r, req)
 	if err != nil {
 		log.Errorf("trans SendTextVerCodeReq req:%v err:%v", req, err)
 		return
 	}
-	log.Debugf("pass transer.GetReq")
 	grpcConn, err := grpc.Dial("172.31.66.86:6657", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Errorf("Dial login svr err:%v", err)
@@ -177,20 +172,18 @@ func sendTextVerCode(w http.ResponseWriter, r *http.Request) {
 	client := login_proto.NewLoginClient(grpcConn)
 	defer grpcConn.Close()
 	defer cancel()
-	log.Debugf("pass NewLoginClient")
 	rsp, err = client.SendTextVerCode(ctx, req)
 	if err != nil || rsp == nil || rsp.RetCode != comm.SuccessCode {
 		log.Errorf("RPC SendTextVerCode err:%v", err)
 		return
 	}
-	log.Debugf("pass SendTextVerCode")
 	// 成功后下发短信验证成功的jwt
 	jwt, err = auth.GeneratorJWT(req.PhoneNumber, auth.RPCSendTextVerCode, auth.TouristJwtExpTs)
 	if err != nil || jwt == "" {
 		log.Errorf("generator jwt err:%v", err)
 		return
 	}
-	log.Debugf("pass GeneratorJWT")
+	w.Header().Set("Token", jwt)
 	rsp.RetCode = comm.SuccessCode
 }
 
@@ -253,6 +246,7 @@ func userPswdLogin(w http.ResponseWriter, r *http.Request) {
 		log.Errorf("generator jwt err:%v", err)
 		return
 	}
+	w.Header().Set("Token", jwt)
 	rsp.RetCode = comm.SuccessCode
 }
 
@@ -315,6 +309,7 @@ func userPhoneLogin(w http.ResponseWriter, r *http.Request) {
 		log.Errorf("generator jwt err:%v", err)
 		return
 	}
+	w.Header().Set("Token", jwt)
 	rsp.RetCode = comm.SuccessCode
 }
 
@@ -377,6 +372,7 @@ func userRegister(w http.ResponseWriter, r *http.Request) {
 		log.Errorf("generator jwt err:%v", err)
 		return
 	}
+	w.Header().Set("Token", jwt)
 	rsp.RetCode = comm.SuccessCode
 }
 

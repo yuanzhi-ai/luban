@@ -17,7 +17,7 @@ http_proxy 发布流程
 2. 删掉旧版的 CONTAINER 和 images
 3. git pull 最新版的Luban代码
 4. 运行指令打docker镜像: docker build -f ProxyDockerfile -t http-proxy:latest .
-5. 启动实例: docker run -dit -p 127.0.0.1:8080:8080/tcp -d -v /usr/wanxiang/http_proxy/app_data:/app/app_data -e WANXIANG_REDIS_ADDR="luban001.redis.rds.aliyuncs.com" -e WANXIANG_REDIS_PSWD="Hxj@41512236" -e WANXIANG_DB_USER="wanxianghui_db" -e WANXIANG_DB_PSWD="Hxj@41512236" -e WANXIANG_DB_IP="rm-cn-lbj3bjl4l000uo.rwlb.rds.aliyuncs.com" -e WANXIANG_DB_PORT="3306" http-proxy:latest
+5. 启动实例: docker run -dit -p 127.0.0.1:8080:8080/tcp -d -v /usr/wanxiang/http_proxy/app_data:/app/app_data -e WANXIANG_REDIS_ADDR="luban001.redis.rds.aliyuncs.com:6379" -e WANXIANG_REDIS_PSWD="Hxj@41512236" -e WANXIANG_DB_USER="wanxianghui_db" -e WANXIANG_DB_PSWD="Hxj@41512236" -e WANXIANG_DB_IP="rm-cn-lbj3bjl4l000uo.rwlb.rds.aliyuncs.com" -e WANXIANG_DB_PORT="3306" http-proxy:latest
 
 login_svr 发布流程
 1. 停止旧版的docker CONTAINER

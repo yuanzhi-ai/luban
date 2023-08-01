@@ -145,7 +145,7 @@ func sendTextVerCode(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// 检查payload是否合法
-	err = IsPayloadLegal(payload, auth.PRCGetMachineVerify)
+	err = IsPayloadLegal(payload, auth.RPCSendMachineVerifyResult)
 	if err != nil {
 		log.Errorf("jwt payload legal. payload:%+v err:%v", payload, err)
 		rsp.RetCode = comm.JWTErr

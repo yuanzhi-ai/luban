@@ -33,7 +33,7 @@ func SendMsg(code string, phoneNumber string) error {
 		return err
 	}
 	sendSmsRequest := &dysmsapi20170525.SendSmsRequest{
-		SignName:      tea.String("万象绘验证码短信"),
+		SignName:      tea.String("万象绘"),
 		TemplateCode:  tea.String("SMS_462225349"),
 		PhoneNumbers:  tea.String(phoneNumber),
 		TemplateParam: tea.String(fmt.Sprintf("{\"code\":\"{%v}\"}", code)),

@@ -113,7 +113,7 @@ func sendMachineVerifyResultHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 验证成功的带上jwt做游客态签名
-	jwt, err := auth.GeneratorJWT(req.CodeId, auth.PRCGetMachineVerify, auth.TouristJwtExpTs)
+	jwt, err := auth.GeneratorJWT(req.CodeId, auth.RPCSendMachineVerifyResult, auth.TouristJwtExpTs)
 	if err != nil {
 		log.Errorf("GeneratorJwt err:%v", err)
 		return

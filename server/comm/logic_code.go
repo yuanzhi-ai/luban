@@ -11,6 +11,7 @@ const (
 	SmsErr       int32 = 1010 // 发送短信消息失败
 	JWTErr       int32 = 1011 // jwt验证失败
 	FrequencyErr int32 = 1012 // 接口限频
+	DBErr        int32 = 1013 // db错误
 	/*verify svr 错误码
 	2000 ~ 2999
 	*/
@@ -39,5 +40,5 @@ const (
 	SendSmsVerCodeErr         int32 = 3015 //发送短信验证码失败
 	RegisterErr               int32 = 3016 //注册失败
 	ResetPswdErr              int32 = 3017 // 重置密码失败
-
+	DuplicateRegisterErr      int32 = 3018 // 重复注册
 )

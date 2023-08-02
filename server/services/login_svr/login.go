@@ -121,6 +121,14 @@ func register(ctx context.Context, phone string, code string, pswd string) (int3
 	if !comm.IsPswdLegal(pswd) {
 		return comm.PswdLegalErr, fmt.Errorf("pswd is not legal. phone:%v, pswd:%v", phone, pswd)
 	}
+	// 验证用户是否已经注册了
+	exist, err := queryUidExist(ctx, phone)
+	if err != nil {
+		return comm.DBErr, err
+	}
+	if exist {
+		return comm.DuplicateRegisterErr, nil
+	}
 	// 向数据库插入用户记录
 	userInfo, err := generatorUserRegister(phone, pswd)
 	if err != nil {

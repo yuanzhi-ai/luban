@@ -108,3 +108,19 @@ func updatePswd(ctx context.Context, phone string, newPswd string) error {
 	}
 	return nil
 }
+
+type Uid struct {
+	Uid sql.NullString `sql:"f_uid"` // 用户的uid 手机号md5
+}
+
+// 查询账号是否存在
+func queryUidExist(ctx context.Context, phone string) (bool, error) {
+	uid := comm.Md5Encode(phone)
+	sql := fmt.Sprintf("select f_uid from %v.%v where f_uid= ?", UserInfoDB, UserInfoTable)
+	rows, err := cl.Query(sql, (*Uid)(nil), uid)
+	if err != nil || len(rows) > 1 {
+		return false, fmt.Errorf("query uid exist fail. uid:%v rowAffect:%v err:%v", uid, len(rows), err)
+	}
+	return len(rows) == 1, nil
+
+}

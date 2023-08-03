@@ -40,7 +40,7 @@ func SendMsg(code string, phoneNumber string) error {
 		SignName:      tea.String("万象绘"),
 		TemplateCode:  tea.String("SMS_462225349"),
 		PhoneNumbers:  tea.String(phoneNumber),
-		TemplateParam: tea.String(fmt.Sprintf("{\"code\":\"{%v}\"}", code)),
+		TemplateParam: tea.String(fmt.Sprintf("{\"code\":\"%v\"}", code)),
 	}
 	log.Debugf("ok request")
 	runtime := &util.RuntimeOptions{}
